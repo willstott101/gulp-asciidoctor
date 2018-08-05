@@ -37,8 +37,19 @@ module.exports = function (options) {
         // just pipe data next, or just do nothing to process file later in flushFunction
         // never forget callback to indicate that the file has been processed.
 
-        var data = asciidoctor.convert(file.contents.toString(),
-            asciidoctorOptions);
+        var data;
+        if (options.keepDocument)
+        {
+            var doc = asciidoctor.load(file.contents.toString(),
+                asciidoctorOptions);
+            file.document = doc;
+            data = doc.convert();
+        }
+        else
+        {
+            data = asciidoctor.convert(file.contents.toString(),
+                asciidoctorOptions);
+        }
 
         file.contents = new Buffer(data);
         file.path = replaceExt(file.path, '.html');
